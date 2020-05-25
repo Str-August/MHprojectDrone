@@ -11,10 +11,10 @@ public class Client {
     private DataOutputStream out = null;
 
     // constructor to put ip address and port
-    public void UNit() {
+    public void UNit(String addressC,int portNum) {
         // establish a connection
         try {
-            Socket sock = new Socket("192.168.0.11", 5533);
+            Socket sock = new Socket(addressC,portNum);
             System.out.println("Connected");
             socket = sock;
 
@@ -59,18 +59,22 @@ public class Client {
         }
     }
 
-    public String recievMessage() {
+    public Byte recievMessage() {
         //int length = input.readInt();
-        String s = "";
+        Byte data;
         try {
-            byte[] message = new byte[5];
-            input.readFully(message, 0, message.length); // read the message
-            s = new String(message);
+            data = input.readByte();
+
         } catch (IOException e) {
             e.printStackTrace();
-            s = "Error";
+            data = '!';
         }
-        return s;
+        return data;
 
+
+    }
+
+    public Socket getSocket() {
+        return socket;
     }
 }

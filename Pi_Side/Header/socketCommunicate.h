@@ -17,7 +17,7 @@ using namespace std;
 
 #define POLL_SIZE 35	// fd max (number client ) can connect server
 #define LOCAL_HOST_SOCK 5533  // local host for socket
-#define MAXLINE 4096
+
 class socketCommunicate {
 private:
 	int listenfd, connfd, sockfd, maxi,i;
@@ -27,9 +27,7 @@ private:
 	socklen_t clilen;
 	struct sockaddr_in server_address,client_address;
 
-	
-	
-	char buf[MAXLINE];
+
 public:
 	void Init(); // create a socket, poll structure
     void EventServer(); // manager all event in server socket include accept connect from a client
