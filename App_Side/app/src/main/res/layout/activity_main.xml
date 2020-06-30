@@ -11,109 +11,69 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:padding="2dp"
+        android:background="#bfbfbf"
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
-    <Switch
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/powerButton"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:padding="10dp"
-        android:layout_margin="10dp"
-        android:text="On/Off"
-        android:onClick="switchClick"
+    >
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/powerButton"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:text="On/Off"
+            android:onClick="switchClick"
+            />
+
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/e_mark"
+            android:id="@+id/buttonInput"
+            />
+        <android.support.v7.widget.AppCompatCheckedTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="INPUT ADDRESS"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_toEndOf="@id/buttonInput"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+    <uit.com.myapplication.JoystickView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentBottom="true"
+        app:JV_buttonColor="#FF6E40"
+        app:JV_buttonSizeRatio="15%"
+        app:JV_borderColor="#00796B"
+        app:JV_borderWidth="4dp"
+        app:JV_autoReCenterButton="false"
         />
-    <RelativeLayout
-        android:layout_width="200dp"
+    <uit.com.myapplication.JoystickView
+        android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="20dp"
-
-        android:layout_marginStart="20dp">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/up1"
-            android:onClick="up1Click"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:id="@+id/left1"
-            android:onClick="left1Click"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/bottom1"
-            android:onClick="bottom1Click"
-
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/right1"
-            android:onClick="right1Click"/>
-
-
-
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="150dp"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginEnd="20dp">
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/up2"
-            android:onClick="up2Click"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:id="@+id/left2"
-            android:onClick="left2Click"
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:id="@+id/bottom2"
-            android:onClick="bottom2Click"
-
-
-            />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:id="@+id/right2"
-            android:onClick="right2Click"/>
+        app:JV_buttonColor="#FF6E40"
+        app:JV_buttonSizeRatio="15%"
+        app:JV_borderColor="#00796B"
+        app:JV_borderWidth="4dp"
+        android:id="@+id/joystick2"
 
 
 
-    </RelativeLayout>
+        />
 </RelativeLayout>

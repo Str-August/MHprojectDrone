@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AppDrone</string>
+    <string name="dialog_message">hello</string>
+    <string name="dialog_title">noonehere</string>
 </resources>
