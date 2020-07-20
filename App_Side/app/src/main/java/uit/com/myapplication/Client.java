@@ -9,9 +9,16 @@ public class Client {
     private Socket socket;
     private DataInputStream input = null;
     private DataOutputStream out = null;
+    private String addressC;
+    private int portNum;
+
+    public Client(String addressC, int portNum) {
+        this.addressC = addressC;
+        this.portNum = portNum;
+    }
 
     // constructor to put ip address and port
-    public void UNit(String addressC,int portNum) {
+    public boolean UNit() {
         // establish a connection
         try {
             Socket sock = new Socket(addressC,portNum);
@@ -23,9 +30,11 @@ public class Client {
 
             // sends output to the socket
             out = new DataOutputStream(socket.getOutputStream());
+            return true;
 
         } catch (Exception u) {
             u.printStackTrace();
+            return false;
 //                try {
 //                    Thread.sleep(2000);//2 seconds
 //                } catch (InterruptedException ie) {
@@ -38,9 +47,9 @@ public class Client {
 
     public void sendMessage(String line) {
         try {
-
-            byte[] b = line.getBytes();
-            out.writeBytes(line);
+            out.writeBytes("!"+line);
+            //byte[] b = line.getBytes();
+            //out.writeBytes(line);
             //out.write(b);
         } catch (Exception i) {
             i.printStackTrace();
@@ -73,6 +82,7 @@ public class Client {
 
 
     }
+
 
     public Socket getSocket() {
         return socket;

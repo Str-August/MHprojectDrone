@@ -6,16 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <VideoView
+    <ImageView
         android:id="@+id/streamView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:padding="2dp"
-        android:background="#bfbfbf"
+        android:scaleType="centerCrop"
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
     <RelativeLayout
@@ -27,44 +25,48 @@
             android:layout_height="wrap_content"
             android:id="@+id/powerButton"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:padding="10dp"
             android:layout_margin="10dp"
             android:text="On/Off"
             android:onClick="switchClick"
             />
-
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/e_mark"
-            android:id="@+id/buttonInput"
-            />
-        <android.support.v7.widget.AppCompatCheckedTextView
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="INPUT ADDRESS"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:layout_toEndOf="@id/buttonInput"
-            android:layout_centerVertical="true"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/motorCutSwitch"
+            android:text="@string/motorCutSwitch"
+
+            />
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/motorCutSwitchP"
+            android:layout_toEndOf="@+id/motorCutSwitch"
+            android:text="@string/motorCutSwitchP"
             />
 
+
     </RelativeLayout>
-    <uit.com.myapplication.JoystickView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+    <uit.com.myapplication.Joystick
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         app:JV_buttonColor="#FF6E40"
         app:JV_buttonSizeRatio="15%"
         app:JV_borderColor="#00796B"
         app:JV_borderWidth="4dp"
-        app:JV_autoReCenterButton="false"
+        android:id="@+id/joystick1"
         />
     <uit.com.myapplication.JoystickView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         app:JV_buttonColor="#FF6E40"

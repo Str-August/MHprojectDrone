@@ -2,88 +2,99 @@ package uit.com.myapplication;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.Switch;
 import android.widget.Toast;
-import android.widget.VideoView;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends Activity {
-
     private Client client;
-    ImageButton inputButton;
+    static private boolean showNotice = false;
+    static private boolean isReady = false;
     String ADDRESSIP;
-    EditText portNum,addrConnect;
-    int PORTNUMBER;
-    VideoView streamView;
+    EditText portNum,addrConnect,portVideo;
+    int PORTNUMBER,PORTVIDEO;
+    ImageView streamView;
     MediaController mediaController;
-    Switch PW;
-    Thread clientThread = null;
+    Switch PW,cutSwitch,cutSwitchP;
+    Thread clientThread = null,streamThread = null;
+    JoystickView joystickRight;
+    Joystick joystickLeft;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ADDRESSIP  = "192.168.0.101";
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        ADDRESSIP  = "192.168.0.15";
         PORTNUMBER = 5533;
+        PORTVIDEO =5555;
 
-
-        streamView = findViewById(R.id.streamView);
         PW = findViewById(R.id.powerButton);
-        inputButton = findViewById(R.id.buttonInput);
-
+        cutSwitch = findViewById(R.id.motorCutSwitch);
+        cutSwitchP = findViewById(R.id.motorCutSwitchP);
+        joystickLeft = findViewById(R.id.joystick1);
+        joystickRight = findViewById(R.id.joystick2);
+        streamView =findViewById(R.id.streamView);
         showDialogInput();
-        inputButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialogInput();
-            }
-        });
-
-
-
-
-//        this.clientThread= new Thread(new ClientThread());
-//        clientThread.start();
-
-
     }
 
     private void showDialogInput() {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         LayoutInflater inflater = LayoutInflater.from(this);
         final View dialogView =inflater.inflate(R.layout.alert_dialog_view,null);
+        addrConnect=dialogView.findViewById(R.id.address_input);
+        portNum=dialogView.findViewById(R.id.port_num);
+        portVideo =dialogView.findViewById(R.id.port_video);
+        addrConnect.setText("192.168.12.1");
+        portNum.setText("5533");
+        portVideo.setText("5555");
         builder.setView(dialogView)
+                .setCancelable(false)
 
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                addrConnect=dialogView.findViewById(R.id.address_input);
-                                portNum=dialogView.findViewById(R.id.port_num);
-                                Toast.makeText(MainActivity.this, "this"+addrConnect.getText().toString(), Toast.LENGTH_LONG).show();
+
                                 if(!addrConnect.getText().toString().isEmpty()&&!portNum.getText().toString().isEmpty()){
                                     if(isCheckedInput(addrConnect.getText().toString(),portNum.getText().toString())) {
                                         ADDRESSIP = addrConnect.getText().toString();
                                         PORTNUMBER = Integer.parseInt(portNum.getText().toString());
-                                        Toast.makeText(MainActivity.this, "Enter successful!!", Toast.LENGTH_LONG).show();
+//                                        clientThread = new Thread(new ClientThread());
+//                                        clientThread.start();
+//                                        while(!isReady);
+//                                        if(!showNotice) {
+//                                            isReady = false;
+//                                            showDialogInput();
+//                                        }
+
+                                        //Toast.makeText(MainActivity.this, "Enter successful!!", Toast.LENGTH_LONG).show();
                                     }else
                                     {
                                         Toast.makeText(MainActivity.this,"Please enter the IP and PORT!!",Toast.LENGTH_LONG).show();
+                                        showDialogInput();
                                     }
                                 }
                                 else
                                 {
                                     Toast.makeText(MainActivity.this,"Please enter the IP and PORT!!",Toast.LENGTH_LONG).show();
+                                    showDialogInput();
                                 }
                             }
                         }
@@ -91,71 +102,122 @@ public class MainActivity extends Activity {
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+
                         Toast.makeText(MainActivity.this,"Please enter the IP and PORT!!",Toast.LENGTH_SHORT).show();
+                        finish();
+                        System.exit(0);
                     }
                 });
         AlertDialog dialog = builder.create();
         dialog.show();
 
+
     }
 
 
-    private void playStream(String src) {
-        Uri UriSrc = Uri.parse(src);
-        if (UriSrc == null) {
-            Toast.makeText(MainActivity.this, "Please enter the Uri.", Toast.LENGTH_LONG).show();
-        } else {
-            streamView.setVideoURI(UriSrc);
-            mediaController = new MediaController(this);
-            streamView.setMediaController(mediaController);
-            streamView.start();
 
-            Toast.makeText(this, "Connect" + src, Toast.LENGTH_LONG).show();
-        }
+    private void playStream(final String src) {
+        final Timer timer =new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                LoadImage loadImage = new LoadImage(streamView);
+                loadImage.execute(src);
+                //your method
+                if(!PW.isChecked()) timer.cancel();
+            }
+        }, 0, 100);//put here time 1000 milliseconds=1 second
+
+//        Uri UriSrc = Uri.parse(src);
+//        if (UriSrc == null) {
+//            Toast.makeText(MainActivity.this, "Please enter the Uri.", Toast.LENGTH_LONG).show();
+//        } else {
+//            streamView.setBackgroundResource(0);
+//            //streamView.setVideoPath(src);
+//            //streamView.setVideoURI(UriSrc);
+//            mediaController = new MediaController(this);
+//            streamView.setMediaController(mediaController);
+//            streamView.start();
+//
+//            Toast.makeText(this, "Connect" + src, Toast.LENGTH_LONG).show();
+//        }
     }
 
     public void switchClick(View view) {
+        switchClickAction();
+    }
+
+    private void switchClickAction() {
         if(PW.isChecked()) {
-            Toast.makeText(this, ADDRESSIP, Toast.LENGTH_LONG).show();
-            Toast.makeText(this, String.valueOf(PORTNUMBER), Toast.LENGTH_LONG).show();
-            this.clientThread= new Thread(new ClientThread());
-            clientThread.start();
-
-
-            //playStream(addrConnect);
-
-            //client.sendMessage("hello");
-
-
+            //client.sendMessage(instructionSend("power","on"));
+            //sendSpeedData();
+            cutSwitch.setChecked(false);
+            //controlMotorCut();
+            playStream("http://"+ADDRESSIP+":"+PORTVIDEO+"/html/cam_pic.php");
         }else
         {
-            client.closeSocket();
+            //client.sendMessage(instructionSend("power","off"));
             Toast.makeText(MainActivity.this, "Turn off", Toast.LENGTH_LONG).show();
         }
-//        PW.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//
-//                if (isChecked) {
-//                    Toast.makeText(MainActivity.this, "Turn on", Toast.LENGTH_LONG).show();
-//                    //playStream(addrConnect);
-//
-//                    client.sendMessage("hello");
-//
-//
-//
-//
-//
-//                } else {
-//                    Toast.makeText(MainActivity.this, "Turn off", Toast.LENGTH_LONG).show();
-//                    //client.closeSocket();
-//                }
-//
-//            }
+    }
 
+    private void sendSpeedData() {
+        joystickLeft.setOnMoveListener(new Joystick.OnMoveListener() {
+            @Override
+            public void onMove(int angle, int strength) {
+                if(angle<0) angle = 1500-5*Math.abs(angle); else  angle = 1500+5*Math.abs(angle);
+                strength = 1000+strength/100;
+                client.sendMessage(instructionSend("JoyR","yaw",Integer.toString(angle)));
+                client.sendMessage(instructionSend("JoyR","throttle",Integer.toString(strength)));
 
-//        });
+            }
+        });
+        joystickRight.setOnMoveListener(new JoystickView.OnMoveListener() {
+            @Override
+            public void onMove(int pitch, int roll) {
+                if(pitch<0) pitch = 1500-5*Math.abs(pitch); else  pitch = 1500+5*Math.abs(pitch);
+                if(roll>0) roll = 1500-5*Math.abs(roll); else  roll = 1500+5*Math.abs(roll);
+                //System.out.println("Test:"+ pitch + " : "+ roll);
+                client.sendMessage(instructionSend("JoyR","pitch",Integer.toString(pitch)));
+                client.sendMessage(instructionSend("JoyR","roll",Integer.toString(roll)));
+            }
+        });
+    }
 
+    private String instructionSend(String device, String valueName, String value)
+    {
+        return (device.length()+"/"+device+valueName.length()+"/"+valueName+value.length()+"/"+value);
+    }
+    private String instructionSend(String device, String valueName)
+    {
+        return (device.length()+"/"+device+valueName.length()+"/"+valueName);
+    }
+
+    private void controlMotorCut() {
+        cutSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b)
+                {
+                    client.sendMessage(instructionSend("motor","cw"));
+                }
+                else
+                {
+                    client.sendMessage(instructionSend("motor","ccw"));
+                }
+            }
+        });
+        cutSwitchP.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    client.sendMessage((instructionSend("motor","on")));
+                } else
+                {
+                    client.sendMessage(instructionSend("motor","off"));
+                }
+            }
+        });
     }
 
     private boolean isCheckedInput(String scr, String port) {
@@ -191,27 +253,103 @@ public class MainActivity extends Activity {
 
 
     class ClientThread implements Runnable {
-        @Override
-        public void run() {
-            client = new Client();
-            client.UNit(ADDRESSIP,PORTNUMBER);
-
-
+        public ClientThread() {
+            client = new Client(ADDRESSIP,PORTNUMBER);
         }
 
+        @Override
+        public void run() {
+
+            if(client.UNit()) {
+                showNotice = true;
+                System.out.println("Test");
+            }
+            else showNotice = false;
+            isReady = true;
+        }
+
+
+    }
+    public Bitmap getBitmapFromURL(String src) {
+        try {
+            java.net.URL url = new java.net.URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            System.out.println(input.toString());
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        switchClickAction();
+//        if(PW.isChecked()) {
+//            this.clientThread = new Thread(new ClientThread());
+//            clientThread.start();
+//        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //switchClickAction();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //client.closeSocket();
+//        client.sendMessage(instructionSend("power","off"));
+//        try {
+//            client.closeSocket();
+//        }catch (Exception u)
+//        {
+//            System.out.println(u);
+//        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        streamView.stopPlayback();
+        //streamView.stopPlayback();
 
+
+    }
+
+    private class LoadImage extends AsyncTask<String,Void,Bitmap>{
+        ImageView imageView;
+        public LoadImage(ImageView streamView) {
+            this.imageView= streamView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            String urlLink= strings[0];
+            Bitmap bitmap = null;
+            try{
+                InputStream inputStream = new java.net.URL(urlLink).openStream();
+                bitmap = BitmapFactory.decodeStream(inputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            streamView.setImageBitmap(bitmap);
+        }
 
     }
 }

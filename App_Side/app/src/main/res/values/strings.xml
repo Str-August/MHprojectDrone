@@ -2,4 +2,12 @@
     <string name="app_name">AppDrone</string>
     <string name="dialog_message">hello</string>
     <string name="dialog_title">noonehere</string>
+    <string name="motorCutSwitchP">cMotor Power</string>
+    <string name="motorCutSwitch">cMotor Direction</string>
+    <string name="text_dialog1">Address:</string>
+    <string name="text_dialog2">Port Control:</string>
+    <string name="text_dialog3">Port Video:</string>
+    <string name="addr_text">192.168.12.1</string>
+    <string name="port_num_text">5533</string>
+    <string name="port_video_text">5555</string>
 </resources>
